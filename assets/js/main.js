@@ -6,28 +6,47 @@ class Game {
         this.height = canvas.height;
         this.baseHeight = 720;
         this.ratio = this.height / this.baseHeight;
+        this.background = new Background(this);
         this.player = new Player(this);
-        this.gravity = 1;
+        this.gravity;
+        this.resize(window.innerWidth, window.innerHeight);
 
-        this.rezise(window.innerWidth, window.innerHeight);
+        window.addEventListener('resize', (e) => {
+            this.resize(e.currentTarget.innerWidth, e.currentTarget.innerHeight);
+        });
 
-        window.addEventListener('resize', e => { 
-            this.rezise(e.currentTarget.innerWidth, e.currentTarget.innerHeight);
+        // Mouse controls
+        this.canvas.addEventListener('mousedown', () => {
+            this.player.flap();
+        });
+
+        // Keyboard controls
+        window.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') this.player.flap();
+        });
+
+        // Touch controls
+        this.canvas.addEventListener('touchstart', (e) => {
+            this.player.flap();
         });
     }
-    rezise(width, height) {
+
+    resize(width, height) {
         this.canvas.width = width;
         this.canvas.height = height;
         this.ctx.fillStyle = 'red';
         this.width = this.canvas.width;
         this.height = this.canvas.height;
         this.ratio = this.height / this.baseHeight;
-        this.player.rezise();
-        console.log(this.height, this.baseHeight, this.ratio);
+
+        this.gravity = 0.15 * this.ratio;
+        this.background.resize();
+        this.player.resize();
     }
 
     render() {
-        // this.ctx.fillStyle = 'red';
+        this.background.update();
+        this.background.draw();
         this.player.update();
         this.player.draw();
     }
@@ -38,8 +57,6 @@ window.addEventListener('load', function () {
     const ctx = canvas.getContext('2d');
     canvas.width = 720;
     canvas.height = 720;
-    ctx.fillStyle = 'gold';
-
     const game = new Game(canvas, ctx);
 
     function animate() {
@@ -48,7 +65,5 @@ window.addEventListener('load', function () {
         requestAnimationFrame(animate);
     }
 
-    this.requestAnimationFrame(animate);
-
-   
+    requestAnimationFrame(animate);
 });
