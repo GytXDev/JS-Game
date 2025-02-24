@@ -15,6 +15,8 @@ class Game {
         this.score;
         this.gameOver;
         this.timer;
+        this.message1;
+        this.message2;
 
         this.resize(window.innerWidth, window.innerHeight);
 
@@ -84,6 +86,15 @@ class Game {
             this.obstacles.push(new Obstacle(this, firstX + i * obstacleSpacing));
         }
     }
+
+    checkCollision(a, b) {
+        const dx = a.collisionX - b.collisionX;
+        const dy = a.collisionY - b.collisonY;
+        const distance = Math.hypot(dx, dy);
+        const sumOfRadii = a.collisionRadius + b.collisionRadius;
+        return distance <= sumOfRadii;
+    }
+
     formatTimer() {
         return (this.timer * 0.001).toFixed(1);
     }
@@ -92,11 +103,11 @@ class Game {
         this.ctx.textAlign = 'right';
         this.ctx.fillText(`Score: ${this.score}`, this.width - 10, 30);
         this.ctx.textAlign = 'left';
-        this.ctx.fillText(`Timer: ` + this.formatTimer(), 10, 30);
+        this.ctx.fillText(`Temps: ` + this.formatTimer(), 10, 30);
         if (this.gameOver) {
             this.ctx.textAlign = 'center';
             this.ctx.font = '30px Bungee';
-            this.ctx.fillText('GAME OVER', this.width * 0.5, this.height * 0.5);
+            this.ctx.fillText('Partie Terminée', this.width * 0.5, this.height * 0.5);
         }
         this.ctx.restore();
     }
