@@ -27,6 +27,10 @@ class Player {
         if (this.isTouchingBottom()) {
             this.y = this.game.height - this.height;
         }
+
+        if (this.isTouchingTop()) {
+            
+        }
     }
 
     resize() {

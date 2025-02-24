@@ -8,7 +8,13 @@ class Game {
         this.ratio = this.height / this.baseHeight;
         this.background = new Background(this);
         this.player = new Player(this);
+        this.obstacles = [];
+        this.numberOfObstacles = 2;
         this.gravity;
+        this.speed;
+        this.score;
+        this.gameOver;
+
         this.resize(window.innerWidth, window.innerHeight);
 
         window.addEventListener('resize', (e) => {
@@ -34,14 +40,21 @@ class Game {
     resize(width, height) {
         this.canvas.width = width;
         this.canvas.height = height;
-        this.ctx.fillStyle = 'red';
+        this.ctx.fillStyle = 'blue';
         this.width = this.canvas.width;
         this.height = this.canvas.height;
         this.ratio = this.height / this.baseHeight;
 
         this.gravity = 0.15 * this.ratio;
+        this.speed = 2 * this.ratio;
         this.background.resize();
         this.player.resize();
+        this.createObstacles();
+        this.obstacles.forEach(obstacle => {
+            obstacle.resize()
+        });
+        this.score = 0;
+        this.gameOver = false;
     }
 
     render() {
@@ -49,6 +62,19 @@ class Game {
         this.background.draw();
         this.player.update();
         this.player.draw();
+        this.obstacles.forEach(obstacle => {
+            obstacle.update();
+            obstacle.draw();
+        });
+    }
+
+    createObstacles() {
+        this.obstacles = [];
+        const firstX = this.baseHeight * this.ratio;
+        const obstacleSpacing = 600 * this.ratio;
+        for (let i = 0; i < this.numberOfObstacles; i++) {
+            this.obstacles.push(new Obstacle(this, firstX + i * obstacleSpacing));
+        }
     }
 }
 
@@ -60,9 +86,9 @@ window.addEventListener('load', function () {
     const game = new Game(canvas, ctx);
 
     function animate() {
-        game.ctx.clearRect(0, 0, game.width, game.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         game.render();
-        requestAnimationFrame(animate);
+        if(!game.gameOver)requestAnimationFrame(animate);
     }
 
     requestAnimationFrame(animate);
